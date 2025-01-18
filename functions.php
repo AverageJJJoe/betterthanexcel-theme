@@ -62,7 +62,7 @@ function invoice_generator_scripts() {
         wp_enqueue_script('jspdf-autotable', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js', array('jspdf'), null, true);
         
         // Vue.js - Production build
-        wp_enqueue_script('vue-js', 'https://unpkg.com/vue@3/dist/vue.global.prod.js', array(), null, true);
+        wp_enqueue_script('vue-js', 'https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js', array(), '3.4.21', true);
         
         // Your invoice script
         wp_enqueue_script('invoice-script', get_stylesheet_directory_uri() . '/invoice-app/script.js', array('vue-js', 'jspdf', 'jspdf-autotable'), '1.0.' . time(), true);
