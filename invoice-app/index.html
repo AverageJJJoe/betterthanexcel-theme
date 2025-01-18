@@ -1,0 +1,130 @@
+<div id="app">
+    <div class="container">
+        <h1>Invoice Generator</h1>
+        
+        <div class="invoice-counter">
+            Total Invoices Generated: <span>{{ invoiceCount }}</span>
+        </div>
+
+        <!-- Sender Information -->
+        <div class="form-section">
+            <h2>Sender Information</h2>
+            <div class="form-group">
+                <label for="logoUpload">Company Logo (optional):</label>
+                <input type="file" id="logoUpload" @change="handleLogoUpload" accept="image/*" class="file-input">
+                <small class="help-text">Maximum file size: 2MB. Maximum dimensions: 1000x1000 pixels.</small>
+                <img v-if="logo" :src="logo" alt="Company Logo" class="logo-preview">
+            </div>
+            <div class="form-group">
+                <label for="senderName">Name:</label>
+                <input type="text" id="senderName" v-model="sender.name">
+            </div>
+            <div class="form-group">
+                <label for="senderAddress">Address:</label>
+                <textarea id="senderAddress" v-model="sender.address"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="senderPhone">Phone:</label>
+                <input type="tel" id="senderPhone" v-model="sender.phone">
+            </div>
+            <div class="form-group">
+                <label for="senderEmail">Email:</label>
+                <input type="email" id="senderEmail" v-model="sender.email">
+            </div>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="form-section">
+            <h2>Customer Information</h2>
+            <div class="form-group">
+                <label for="recipientName">Name:</label>
+                <input type="text" id="recipientName" v-model="recipient.name">
+            </div>
+            <div class="form-group">
+                <label for="recipientAddress">Address:</label>
+                <textarea id="recipientAddress" v-model="recipient.address"></textarea>
+            </div>
+        </div>
+
+        <!-- Invoice Details -->
+        <div class="form-section">
+            <h2>Invoice Details</h2>
+            <div class="form-group">
+                <label for="invoiceNumber">Invoice Number:</label>
+                <input type="text" id="invoiceNumber" v-model="invoice.number">
+            </div>
+            <div class="form-group">
+                <label for="invoiceDate">Invoice Date:</label>
+                <input type="date" id="invoiceDate" v-model="invoice.date">
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="form-section">
+            <h2>Items</h2>
+            <div class="items-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in invoice.items" :key="index">
+                            <td><input type="text" v-model="item.description"></td>
+                            <td><input type="number" v-model.number="item.quantity" min="1"></td>
+                            <td><input type="number" v-model.number="item.unitPrice" min="0"></td>
+                            <td>{{ calculateItemTotal(item) }}</td>
+                            <td><button @click="removeItem(index)" class="remove-btn">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button @click="addItem" class="add-btn">Add Item</button>
+            </div>
+        </div>
+
+        <!-- Totals Section -->
+        <div class="form-section totals">
+            <div class="total-row">
+                <label>Subtotal:</label>
+                <span>{{ calculateSubtotal }}</span>
+            </div>
+            <div class="total-row">
+                <label for="taxType">Tax Type:</label>
+                <select id="taxType" v-model="invoice.taxType" class="tax-select">
+                    <option value="sales">Sales Tax</option>
+                    <option value="vat">VAT</option>
+                    <option value="gst">GST</option>
+                </select>
+            </div>
+            <div class="total-row">
+                <label for="taxRate">{{ invoice.taxType.toUpperCase() }} Rate (%):</label>
+                <input type="number" id="taxRate" v-model.number="invoice.taxRate" min="0" max="100">
+            </div>
+            <div class="total-row">
+                <label>Tax Amount:</label>
+                <span>{{ calculateTaxAmount }}</span>
+            </div>
+            <div class="total-row">
+                <label>Total:</label>
+                <span>{{ calculateTotal }}</span>
+            </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="form-section">
+            <h2>Notes</h2>
+            <textarea v-model="invoice.notes" placeholder="Additional notes..."></textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+            <button @click="generatePDF" class="primary-btn">Generate PDF</button>
+            <button @click="emailInvoice" class="secondary-btn">Email Invoice</button>
+        </div>
+    </div>
+</div>
